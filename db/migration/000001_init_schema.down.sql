@@ -1,0 +1,4 @@
+DROP TABLE IF EXISTS booking;
+DROP TABLE IF EXISTS launch;
+DROP TABLE IF EXISTS launchpad;
+DROP TABLE IF EXISTS destination;
