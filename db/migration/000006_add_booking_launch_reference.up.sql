@@ -1,0 +1,2 @@
+ALTER TABLE booking ADD launch_id UUID NOT NULL;
+ALTER TABLE booking ADD FOREIGN KEY (launch_id) REFERENCES launch(id) ON DELETE CASCADE;

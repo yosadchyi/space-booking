@@ -22,8 +22,11 @@ type ErrorResponse struct {
 	Message string
 }
 
-// AllLaunchpadsResponse represents response to /launchpad/ request
+// AllLaunchpadsResponse represents response to /launchpad/ GET request
 type AllLaunchpadsResponse []Launchpad
 
-// AllDestinationsResponse represents response to /destination/ request
+// AllDestinationsResponse represents response to /destination/ GET request
 type AllDestinationsResponse []Destination
+
+// AllBookingsResponse represents response to /booking/ GET request
+type AllBookingsResponse []Booking

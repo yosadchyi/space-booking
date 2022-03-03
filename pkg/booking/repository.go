@@ -18,6 +18,7 @@ type MainRepository interface {
 	AddTx(tx *sql.Tx, booking *Booking) error
 	GetDestinationIdForBookingId(tx *sql.Tx, id string) (string, error)
 	GetAll() ([]Booking, error)
+	Delete(tx *sql.Tx, id string) error
 }
 
 // DestinationRepository repository to access all launchpads
@@ -41,6 +42,7 @@ type LaunchRepository interface {
 	GetFromLaunchpadAtDate(launchpadId string, date Date) ([]Launch, error)
 	GetWeekLaunches(tx *sql.Tx, launchpadId string, date Date) ([]Launch, error)
 	GetAllUpcoming() ([]Launch, error)
+	Delete(tx *sql.Tx, id string) error
 }
 
 type mainRepository struct {
@@ -63,7 +65,7 @@ func NewMainRepository(db *sql.DB) MainRepository {
 	return &mainRepository{db: db}
 }
 
-func (d *mainRepository) GetDestinationIdForBookingId(tx *sql.Tx, id string) (string, error) {
+func (m *mainRepository) GetDestinationIdForBookingId(tx *sql.Tx, id string) (string, error) {
 	row := tx.QueryRow("SELECT destination_id FROM booking WHERE id = $1", id)
 	destinationId := ""
 	err := row.Scan(&destinationId)
@@ -74,22 +76,38 @@ func (d *mainRepository) GetDestinationIdForBookingId(tx *sql.Tx, id string) (st
 }
 
 func (m *mainRepository) AddTx(tx *sql.Tx, booking *Booking) error {
-	id, err := uuid.NewUUID()
-	if err != nil {
-		return err
-	}
-	booking.Id = id.String()
 	query := `INSERT INTO booking 
-    	(id, first_name, last_name, gender, birthday, launch_date, launchpad_id, destination_id)
+    	(id, first_name, last_name, gender, birthday, launch_date, launchpad_id, destination_id, launch_id)
 		VALUES
-		($1, $2, $3, $4, $5, $6, $7, $8)`
-	_, err = tx.Exec(query, id, booking.FirstName, booking.LastName, booking.Gender, time.Time(booking.Birthday),
-		time.Time(booking.LaunchDate), booking.LaunchpadId, booking.DestinationId)
+		($1, $2, $3, $4, $5, $6, $7, $8, $9)`
+	_, err := tx.Exec(query, booking.Id, booking.FirstName, booking.LastName, booking.Gender, time.Time(booking.Birthday),
+		time.Time(booking.LaunchDate), booking.LaunchpadId, booking.DestinationId, booking.LaunchId)
+	return err
+}
+
+func (m *mainRepository) Delete(tx *sql.Tx, id string) error {
+	_, err := tx.Exec("DELETE FROM booking WHERE id = $1", id)
 	return err
 }
 
 func (m *mainRepository) GetAll() ([]Booking, error) {
-	panic("implement me")
+	rows, err := m.db.Query(`SELECT 
+			id, first_name, last_name, gender, birthday, launch_date, launchpad_id, destination_id, launch_id
+		FROM booking ORDER BY id`)
+	if err != nil {
+		return nil, err
+	}
+
+	bookings := make([]Booking, 0, 1)
+	for rows.Next() {
+		booking := Booking{}
+		if err := rows.Scan(&booking.Id, &booking.FirstName, &booking.LastName, &booking.Gender,
+			&booking.Birthday, &booking.LaunchDate, &booking.LaunchpadId, &booking.DestinationId, &booking.LaunchId); err != nil {
+			return bookings, err
+		}
+		bookings = append(bookings, booking)
+	}
+	return bookings, nil
 }
 
 // NewDestinationRepository creates new destination repository
@@ -223,6 +241,11 @@ func (l *launchRepository) getLaunches(rows *sql.Rows) ([]Launch, error) {
 		launches = append(launches, launch)
 	}
 	return launches, nil
+}
+
+func (l *launchRepository) Delete(tx *sql.Tx, id string) error {
+	_, err := tx.Exec("DELETE FROM launch WHERE id = $1", id)
+	return err
 }
 
 // exists is an utility function to check if record exists

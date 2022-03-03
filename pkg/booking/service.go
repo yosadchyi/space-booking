@@ -49,13 +49,31 @@ func (s *Service) Init() {
 }
 
 func (s *Service) GetAllLaunchpads() (AllLaunchpadsResponse, error) {
-	launchpads, err := s.launchpadRepository.GetAllActive()
-	return launchpads, err
+	return s.launchpadRepository.GetAllActive()
 }
 
 func (s *Service) GetAllDestinations() (AllDestinationsResponse, error) {
-	destinations, err := s.destinationRepository.GetAll()
-	return destinations, err
+	return s.destinationRepository.GetAll()
+}
+
+func (s *Service) GetAllBookings() (AllBookingsResponse, error) {
+	return s.mainRepository.GetAll()
+}
+
+func (s *Service) DeleteBooking(id string) error {
+	tx, _ := s.db.Begin()
+	err := s.mainRepository.Delete(tx, id)
+	if err != nil {
+		_ = tx.Rollback()
+		return err
+	}
+	err = s.launchRepository.Delete(tx, id)
+	if err != nil {
+		_ = tx.Rollback()
+		return err
+	}
+	_ = tx.Commit()
+	return nil
 }
 
 func (s *Service) AddBooking(request Request) (interface{}, error) {
@@ -87,18 +105,26 @@ func (s *Service) AddBooking(request Request) (interface{}, error) {
 			Message: "Destination does not exists",
 		}, nil
 	}
+	newUUID, err := uuid.NewUUID()
+	if err != nil {
+		return nil, err
+	}
+
+	tx, _ := s.db.Begin()
 	launches, err := s.launchRepository.GetFromLaunchpadAtDate(request.LaunchpadId, request.LaunchDate)
+
 	if err != nil {
 		return nil, err
 	}
 	if len(launches) > 0 {
+		_ = tx.Rollback()
 		return &ErrorResponse{
 			Code:    "LAUNCHPAD_BUSY",
 			Message: "Launchpad is busy at given date",
 		}, nil
 	}
 	booking := Booking{
-		Id:            "",
+		Id:            newUUID.String(),
 		FirstName:     request.FirstName,
 		LastName:      request.LastName,
 		Gender:        request.Gender,
@@ -106,16 +132,15 @@ func (s *Service) AddBooking(request Request) (interface{}, error) {
 		LaunchpadId:   request.LaunchpadId,
 		DestinationId: request.DestinationId,
 		LaunchDate:    request.LaunchDate,
+		LaunchId:      newUUID.String(), // for simplicity use same id for launch as for booking
 	}
 
-	tx, _ := s.db.Begin()
 	weekLaunches, err := s.launchRepository.GetWeekLaunches(tx, booking.LaunchpadId, booking.LaunchDate)
 	if err != nil {
 		_ = tx.Rollback()
 		return nil, err
 	}
 	for _, launch := range weekLaunches {
-		// as we're using same Id for Launch record as for booking, it's quite simple
 		id, err := s.mainRepository.GetDestinationIdForBookingId(tx, launch.Id)
 		switch {
 		case err == sql.ErrNoRows:
@@ -130,16 +155,16 @@ func (s *Service) AddBooking(request Request) (interface{}, error) {
 			}, nil
 		}
 	}
-	err = s.mainRepository.AddTx(tx, &booking)
+	err = s.launchRepository.AddTx(tx, &Launch{
+		Id:          booking.Id, // using same id as for booking for simplicity
+		LaunchpadId: booking.LaunchpadId,
+		Date:        booking.LaunchDate,
+	})
 	if err != nil {
 		_ = tx.Rollback()
 		return nil, err
 	}
-	err = s.launchRepository.AddTx(tx, &Launch{
-		Id:          booking.Id,
-		LaunchpadId: booking.LaunchpadId, // same as booking ID, unique in launch table
-		Date:        booking.LaunchDate,
-	})
+	err = s.mainRepository.AddTx(tx, &booking)
 	if err != nil {
 		_ = tx.Rollback()
 		return nil, err
