@@ -1,5 +1,11 @@
 package booking
 
+// Destination launchpad model
+type Destination struct {
+	Id   string
+	Name string
+}
+
 // Launchpad launchpad model
 type Launchpad struct {
 	Id     string

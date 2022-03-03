@@ -5,7 +5,6 @@ import (
 
 	"github.com/yosadchyi/space-booking/pkg/booking"
 	"github.com/yosadchyi/space-booking/pkg/db"
-	"github.com/yosadchyi/space-booking/pkg/spacex"
 )
 
 func main() {
@@ -13,25 +12,7 @@ func main() {
 	if err != nil {
 		log.Fatal("can't connect to database")
 	}
-	spaceXClient := spacex.NewClient()
-	launchpadRepository := booking.NewLaunchpadRepository(database)
-	launchRepository := booking.NewLaunchRepository(database)
-	importer := booking.NewDataImporter(spaceXClient, launchpadRepository, launchRepository)
+	service := booking.NewService(database)
 
-	log.Println("importing launchpad data...")
-	err = importer.ImportLaunchpads()
-	if err != nil {
-		log.Fatalf("error importing launchpad data: %s", err)
-	}
-
-	log.Println("importing upcoming launches data...")
-	err = importer.ImportUpcomingSpaceXLaunches()
-	if err != nil {
-		log.Fatalf("error importing upcoming launches: %s", err)
-	}
-
-	upcoming, _ := launchRepository.GetAllUpcoming()
-	log.Printf("%v", upcoming)
-
-	log.Println("data import finished successfully")
+	service.Init()
 }

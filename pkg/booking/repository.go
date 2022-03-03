@@ -19,6 +19,12 @@ type MainRepository interface {
 	GetAll() ([]Booking, error)
 }
 
+// DestinationRepository repository to access all launchpads
+type DestinationRepository interface {
+	Exists(id string) (bool, error)
+	GetAll() ([]Destination, error)
+}
+
 // LaunchpadRepository repository to access all launchpads
 type LaunchpadRepository interface {
 	Exists(id string) (bool, error)
@@ -34,6 +40,10 @@ type LaunchRepository interface {
 	GetAllUpcoming() ([]Launch, error)
 }
 
+type destinationRepository struct {
+	db *sql.DB
+}
+
 type launchpadRepository struct {
 	db *sql.DB
 }
@@ -42,12 +52,32 @@ type launchRepository struct {
 	db *sql.DB
 }
 
-func NewRepositories(db *sql.DB) *Repositories {
-	return &Repositories{
-		Booking:   nil,
-		Launchpad: NewLaunchpadRepository(db),
-		Launch:    NewLaunchRepository(db),
+// NewDestinationRepository creates new destination repository
+func NewDestinationRepository(db *sql.DB) DestinationRepository {
+	return &destinationRepository{db: db}
+}
+
+func (d *destinationRepository) Exists(id string) (bool, error) {
+	row := d.db.QueryRow("SELECT true FROM destination WHERE id = $1", id)
+	return exists(row)
+}
+
+func (d *destinationRepository) GetAll() ([]Destination, error) {
+	rows, err := d.db.Query("SELECT id, name FROM destination ORDER BY name")
+	if err != nil {
+		return nil, err
 	}
+
+	destinations := make([]Destination, 0, 1)
+	for rows.Next() {
+		destination := Destination{}
+		if err := rows.Scan(&destination.Id, &destination.Name); err != nil {
+			return destinations, err
+		}
+		destinations = append(destinations, destination)
+	}
+	return destinations, nil
+
 }
 
 // NewLaunchpadRepository create new launchpad repository

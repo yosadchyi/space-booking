@@ -21,3 +21,9 @@ type ErrorResponse struct {
 	Code    string
 	Message string
 }
+
+// AllLaunchpadsResponse represents response to /launchpad/ request
+type AllLaunchpadsResponse []Launchpad
+
+// AllDestinationsResponse represents response to /destination/ request
+type AllDestinationsResponse []Destination

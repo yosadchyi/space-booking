@@ -1,0 +1,1 @@
+CREATE INDEX destination_name_idx ON destination(name);
