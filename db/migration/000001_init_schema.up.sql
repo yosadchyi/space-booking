@@ -24,7 +24,7 @@ INSERT INTO destination (id, name) VALUES
     ('b11cadee-e907-4e55-8bef-be92aaad940c', 'Mars'),
     ('135273de-ed80-4577-8157-19af8cedbf03', 'Moon'),
     ('b805aa0a-b14b-41b2-b927-d9a6e1fa22a9', 'Pluto'),
-    ('c4db5f9d-82ad-4914-9a2a-63432ed0b3a1', 'Asteriod Belt'),
+    ('c4db5f9d-82ad-4914-9a2a-63432ed0b3a1', 'Asteroid Belt'),
     ('fe8d4bfb-8989-467d-b4c7-07091b3266ce', 'Europa'),
     ('564c14da-5717-438c-b7df-a699e0caaa6c', 'Titan'),
     ('1e255888-bb39-44c7-9208-6a673eafa264', 'Ganymede');
