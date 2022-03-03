@@ -99,7 +99,6 @@ func (h *Handler) handleDELETE(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case h.deleteBookingPat.MatchString(r.RequestURI):
 		str := h.deleteBookingPat.FindStringSubmatch(r.RequestURI)
-		log.Printf("%v", str)
 		id := str[1]
 		_, err := uuid.Parse(id)
 		if err != nil {

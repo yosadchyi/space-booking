@@ -3,6 +3,7 @@ package booking
 import (
 	"database/sql"
 	"log"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/yosadchyi/space-booking/pkg/spacex"
@@ -77,6 +78,12 @@ func (s *Service) DeleteBooking(id string) error {
 }
 
 func (s *Service) AddBooking(request Request) (interface{}, error) {
+	if time.Time(request.LaunchDate).Before(time.Now()) {
+		return &ErrorResponse{
+			Code:    "LAUNCH_DATE_IS_IN_PAST",
+			Message: "launch date is in past",
+		}, nil
+	}
 	active, err := s.launchpadRepository.ExistsAndIsActive(request.LaunchpadId)
 	if err != nil {
 		return nil, err
@@ -84,7 +91,7 @@ func (s *Service) AddBooking(request Request) (interface{}, error) {
 	if !active {
 		return &ErrorResponse{
 			Code:    "LAUNCHPAD_NOT_AVAILABLE",
-			Message: "Launchpad does not exists or is inactive",
+			Message: "launchpad does not exists or is inactive",
 		}, nil
 	}
 	_, err = uuid.Parse(request.DestinationId)
@@ -92,7 +99,7 @@ func (s *Service) AddBooking(request Request) (interface{}, error) {
 		// bad uuid
 		return &ErrorResponse{
 			Code:    "DESTINATION_ID_IS_INVALID",
-			Message: "Malformed destination id",
+			Message: "malformed destination id",
 		}, nil
 	}
 	exists, err := s.destinationRepository.Exists(request.DestinationId)
@@ -102,7 +109,7 @@ func (s *Service) AddBooking(request Request) (interface{}, error) {
 	if !exists {
 		return &ErrorResponse{
 			Code:    "DESTINATION_IS_INVALID",
-			Message: "Destination does not exists",
+			Message: "destination does not exists",
 		}, nil
 	}
 	newUUID, err := uuid.NewUUID()
@@ -120,7 +127,7 @@ func (s *Service) AddBooking(request Request) (interface{}, error) {
 		_ = tx.Rollback()
 		return &ErrorResponse{
 			Code:    "LAUNCHPAD_BUSY",
-			Message: "Launchpad is busy at given date",
+			Message: "launchpad is busy at given date",
 		}, nil
 	}
 	booking := Booking{
@@ -151,7 +158,7 @@ func (s *Service) AddBooking(request Request) (interface{}, error) {
 		if request.DestinationId == id {
 			return &ErrorResponse{
 				Code:    "SAME_DESTINATION_IN_WEEK",
-				Message: "Launchpad already used/booked for this destination during requested week",
+				Message: "launchpad already used/booked for this destination during requested week",
 			}, nil
 		}
 	}
@@ -172,4 +179,9 @@ func (s *Service) AddBooking(request Request) (interface{}, error) {
 	_ = tx.Commit()
 
 	return &SuccessResponse{Id: booking.Id}, nil
+}
+
+func (s *Service) PingDb() error {
+	_, err := s.db.Exec("SELECT * FROM launchpad")
+	return err
 }

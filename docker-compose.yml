@@ -1,0 +1,33 @@
+version: "3.9"
+services:
+  database:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_USER: spacebooking
+      POSTGRES_PASSWORD: spacebooking
+      POSTGRES_DB: spacebooking
+    ports:
+      - "5432:5432"
+  migrate:
+    image: migrate/migrate
+    entrypoint: "migrate -database postgresql://spacebooking:spacebooking@database/spacebooking?sslmode=disable -path /tmp/migrations"
+    command: up
+    links:
+      - database
+    volumes:
+      - ./db/migrations:/tmp/migrations
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DB_CONN_INFO: "host=database port=5432 user=spacebooking password=spacebooking dbname=spacebooking sslmode=disable"
+    depends_on:
+      - database
+    networks:
+      - default
+    ports:
+      - "8080:8080"
+volumes:
+  data:

@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/yosadchyi/space-booking/pkg/booking"
 	"github.com/yosadchyi/space-booking/pkg/db"
@@ -25,6 +26,13 @@ func main() {
 		log.Fatal("can't connect to database")
 	}
 	service := booking.NewService(database)
+	for i := 0; i < 10; i++ {
+		err := service.PingDb()
+		if err == nil {
+			break
+		}
+		time.Sleep(time.Second)
+	}
 	service.Init()
 	handler := booking.NewHandler(service)
 	bindAddr := getenv("HTTP_BIND_ADDR", defaultBindAddr)
