@@ -29,11 +29,14 @@ INSERT INTO destination (id, name) VALUES
     ('564c14da-5717-438c-b7df-a699e0caaa6c', 'Titan'),
     ('1e255888-bb39-44c7-9208-6a673eafa264', 'Ganymede');
 
+CREATE TYPE gender AS ENUM ('Maile', 'Female');
+
 CREATE TABLE booking
 (
     id UUID NOT NULL PRIMARY KEY,
     first_name VARCHAR(256) NOT NULL,
     last_name VARCHAR(256) NOT NULL,
+    gender gender NOT NULL,
     birthday DATE NOT NULL,
     launch_date DATE NOT NULL,
     launchpad_id CHAR(24) NOT NULL REFERENCES launchpad(id),

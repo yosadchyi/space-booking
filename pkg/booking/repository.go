@@ -15,7 +15,8 @@ type Repositories struct {
 
 // MainRepository booking repository
 type MainRepository interface {
-	Add(booking *Booking) (bool, error)
+	AddTx(tx *sql.Tx, booking *Booking) error
+	GetDestinationIdForBookingId(tx *sql.Tx, id string) (string, error)
 	GetAll() ([]Booking, error)
 }
 
@@ -27,7 +28,7 @@ type DestinationRepository interface {
 
 // LaunchpadRepository repository to access all launchpads
 type LaunchpadRepository interface {
-	Exists(id string) (bool, error)
+	ExistsAndIsActive(id string) (bool, error)
 	AddOrUpdate(launchpad *Launchpad) error
 	GetAllActive() ([]Launchpad, error)
 }
@@ -36,8 +37,14 @@ type LaunchpadRepository interface {
 type LaunchRepository interface {
 	Exists(date Date, launchpadId string) (bool, error)
 	Add(launch *Launch) error
-	GetAtDate(date Date) ([]Launch, error)
+	AddTx(tx *sql.Tx, launch *Launch) error
+	GetFromLaunchpadAtDate(launchpadId string, date Date) ([]Launch, error)
+	GetWeekLaunches(tx *sql.Tx, launchpadId string, date Date) ([]Launch, error)
 	GetAllUpcoming() ([]Launch, error)
+}
+
+type mainRepository struct {
+	db *sql.DB
 }
 
 type destinationRepository struct {
@@ -50,6 +57,39 @@ type launchpadRepository struct {
 
 type launchRepository struct {
 	db *sql.DB
+}
+
+func NewMainRepository(db *sql.DB) MainRepository {
+	return &mainRepository{db: db}
+}
+
+func (d *mainRepository) GetDestinationIdForBookingId(tx *sql.Tx, id string) (string, error) {
+	row := tx.QueryRow("SELECT destination_id FROM booking WHERE id = $1", id)
+	destinationId := ""
+	err := row.Scan(&destinationId)
+	if err != nil {
+		return "", err
+	}
+	return destinationId, nil
+}
+
+func (m *mainRepository) AddTx(tx *sql.Tx, booking *Booking) error {
+	id, err := uuid.NewUUID()
+	if err != nil {
+		return err
+	}
+	booking.Id = id.String()
+	query := `INSERT INTO booking 
+    	(id, first_name, last_name, gender, birthday, launch_date, launchpad_id, destination_id)
+		VALUES
+		($1, $2, $3, $4, $5, $6, $7, $8)`
+	_, err = tx.Exec(query, id, booking.FirstName, booking.LastName, booking.Gender, time.Time(booking.Birthday),
+		time.Time(booking.LaunchDate), booking.LaunchpadId, booking.DestinationId)
+	return err
+}
+
+func (m *mainRepository) GetAll() ([]Booking, error) {
+	panic("implement me")
 }
 
 // NewDestinationRepository creates new destination repository
@@ -77,7 +117,6 @@ func (d *destinationRepository) GetAll() ([]Destination, error) {
 		destinations = append(destinations, destination)
 	}
 	return destinations, nil
-
 }
 
 // NewLaunchpadRepository create new launchpad repository
@@ -85,8 +124,8 @@ func NewLaunchpadRepository(db *sql.DB) LaunchpadRepository {
 	return &launchpadRepository{db: db}
 }
 
-func (l *launchpadRepository) Exists(id string) (bool, error) {
-	row := l.db.QueryRow("SELECT true FROM launchpad WHERE id = $1", id)
+func (l *launchpadRepository) ExistsAndIsActive(id string) (bool, error) {
+	row := l.db.QueryRow("SELECT true FROM launchpad WHERE id = $1 AND status = 'active'", id)
 	return exists(row)
 }
 
@@ -131,8 +170,18 @@ func (l *launchRepository) Add(launch *Launch) error {
 	if err != nil {
 		return err
 	}
-	_, err = l.db.Exec("INSERT INTO launch (id, launchpad_id, date) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING",
-		newUUID, launch.LaunchpadId, time.Time(launch.Date))
+	time := time.Time(launch.Date)
+	year, week := time.ISOWeek()
+	_, err = l.db.Exec("INSERT INTO launch (id, launchpad_id, date, year, week) VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING",
+		newUUID, launch.LaunchpadId, time, year, week)
+	return err
+}
+
+func (l *launchRepository) AddTx(tx *sql.Tx, launch *Launch) error {
+	time := time.Time(launch.Date)
+	year, week := time.ISOWeek()
+	_, err := tx.Exec("INSERT INTO launch (id, launchpad_id, date, year, week) VALUES ($1, $2, $3, $4, $5)",
+		launch.Id, launch.LaunchpadId, time, year, week)
 	return err
 }
 
@@ -144,8 +193,20 @@ func (l *launchRepository) GetAllUpcoming() ([]Launch, error) {
 	return l.getLaunches(rows)
 }
 
-func (l *launchRepository) GetAtDate(date Date) ([]Launch, error) {
-	rows, err := l.db.Query("SELECT id, launchpad_id, date FROM launch WHERE date = $1 ORDER BY id", date)
+func (l *launchRepository) GetFromLaunchpadAtDate(launchpadId string, date Date) ([]Launch, error) {
+	rows, err := l.db.Query("SELECT id, launchpad_id, date FROM launch WHERE launchpad_id = $1 AND date = $2 ORDER BY id",
+		launchpadId, time.Time(date))
+	if err != nil {
+		return nil, err
+	}
+	return l.getLaunches(rows)
+}
+
+func (l *launchRepository) GetWeekLaunches(tx *sql.Tx, launchpadId string, date Date) ([]Launch, error) {
+	year, week := time.Time(date).ISOWeek()
+	rows, err := l.db.Query(`SELECT id, launchpad_id, date FROM launch 
+		WHERE launchpad_id = $1 AND year = $2 AND week = $3 ORDER BY id`,
+		launchpadId, year, week)
 	if err != nil {
 		return nil, err
 	}

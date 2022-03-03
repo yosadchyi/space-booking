@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -16,6 +17,17 @@ func main() {
 	service := booking.NewService(database)
 	service.Init()
 	handler := booking.NewHandler(service)
+	marshal, _ := json.Marshal(booking.Booking{
+		Id:            "",
+		FirstName:     "",
+		LastName:      "",
+		Gender:        "",
+		Birthday:      booking.Date{},
+		LaunchpadId:   "",
+		DestinationId: "",
+		LaunchDate:    booking.Date{},
+	})
+	log.Println(string(marshal))
 	log.Println("listening at *:8080...")
 	err = http.ListenAndServe(":8080", handler)
 	if err != nil {
