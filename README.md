@@ -9,3 +9,9 @@ Only dependencies used are:
 - pq driver
 
 It also contains postman collection to provide request samples.
+
+# Running
+
+```bash
+docker-compose up
+```
