@@ -1,0 +1,509 @@
+{
+	"info": {
+		"_postman_id": "2cf6b2b2-095d-4bbb-9267-9f59ac943fea",
+		"name": "space-booking",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get launchpads",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODA4MFwvYXBpXC92MVwvdXNlclwvbG9naW4iLCJpYXQiOjE2MTUyOTkyMTQsImV4cCI6MTYxNTczMTIxNCwibmJmIjoxNjE1Mjk5MjE0LCJqdGkiOiI5VjZYNWVaYTUxSGJSS3BZIiwic3ViIjoxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0._05_RcUX-JBu2ZVwniQtHrFBhnTFhyYaltXiHfr2fsA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/launchpad/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"launchpad",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get destinations",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODA4MFwvYXBpXC92MVwvdXNlclwvbG9naW4iLCJpYXQiOjE2MTUyOTkyMTQsImV4cCI6MTYxNTczMTIxNCwibmJmIjoxNjE1Mjk5MjE0LCJqdGkiOiI5VjZYNWVaYTUxSGJSS3BZIiwic3ViIjoxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0._05_RcUX-JBu2ZVwniQtHrFBhnTFhyYaltXiHfr2fsA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/destination/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"destination",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New booking: launchpad is busy",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODA4MFwvYXBpXC92MVwvdXNlclwvbG9naW4iLCJpYXQiOjE2MTUyOTkyMTQsImV4cCI6MTYxNTczMTIxNCwibmJmIjoxNjE1Mjk5MjE0LCJqdGkiOiI5VjZYNWVaYTUxSGJSS3BZIiwic3ViIjoxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0._05_RcUX-JBu2ZVwniQtHrFBhnTFhyYaltXiHfr2fsA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"FirstName\": \"Yurii\",\n  \"LastName\": \"Osadchyi\",\n  \"Gender\": \"Female\",\n  \"Birthday\": \"1984-08-30\",\n  \"LaunchpadId\": \"5e9e4501f509094ba4566f84\",\n  \"DestinationId\": \"b805aa0a-b14b-41b2-b927-d9a6e1fa22a9\",\n  \"LaunchDate\": \"2022-03-08\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/booking/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"booking",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New booking: bad launchpad id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODA4MFwvYXBpXC92MVwvdXNlclwvbG9naW4iLCJpYXQiOjE2MTUyOTkyMTQsImV4cCI6MTYxNTczMTIxNCwibmJmIjoxNjE1Mjk5MjE0LCJqdGkiOiI5VjZYNWVaYTUxSGJSS3BZIiwic3ViIjoxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0._05_RcUX-JBu2ZVwniQtHrFBhnTFhyYaltXiHfr2fsA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"FirstName\": \"Yurii\",\n  \"LastName\": \"Osadchyi\",\n  \"Gender\": \"Female\",\n  \"Birthday\": \"1984-08-30\",\n  \"LaunchpadId\": \"5e9e4501f509094ba4566f84\",\n  \"DestinationId\": \"b805aa0a-b14b-41b2-b927-d9a6e1fa22a91\",\n  \"LaunchDate\": \"2022-03-08\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/booking/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"booking",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New booking: destination does not exists",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODA4MFwvYXBpXC92MVwvdXNlclwvbG9naW4iLCJpYXQiOjE2MTUyOTkyMTQsImV4cCI6MTYxNTczMTIxNCwibmJmIjoxNjE1Mjk5MjE0LCJqdGkiOiI5VjZYNWVaYTUxSGJSS3BZIiwic3ViIjoxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0._05_RcUX-JBu2ZVwniQtHrFBhnTFhyYaltXiHfr2fsA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"FirstName\": \"Yurii\",\n  \"LastName\": \"Osadchyi\",\n  \"Gender\": \"Female\",\n  \"Birthday\": \"1984-08-30\",\n  \"LaunchpadId\": \"5e9e4501f509094ba4566f84\",\n  \"DestinationId\": \"b805aa0a-b14b-41b2-b927-d9a6e1fa22a1\",\n  \"LaunchDate\": \"2022-03-08\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/booking/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"booking",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New booking: malformed destination id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODA4MFwvYXBpXC92MVwvdXNlclwvbG9naW4iLCJpYXQiOjE2MTUyOTkyMTQsImV4cCI6MTYxNTczMTIxNCwibmJmIjoxNjE1Mjk5MjE0LCJqdGkiOiI5VjZYNWVaYTUxSGJSS3BZIiwic3ViIjoxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0._05_RcUX-JBu2ZVwniQtHrFBhnTFhyYaltXiHfr2fsA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"FirstName\": \"Yurii\",\n  \"LastName\": \"Osadchyi\",\n  \"Gender\": \"Female\",\n  \"Birthday\": \"1984-08-30\",\n  \"LaunchpadId\": \"5e9e4501f509094ba4566f84\",\n  \"DestinationId\": \"b805aa0a-b14b-41b2-b927-d9a6e1fa22a11\",\n  \"LaunchDate\": \"2022-03-08\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/booking/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"booking",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New booking: successful booking",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODA4MFwvYXBpXC92MVwvdXNlclwvbG9naW4iLCJpYXQiOjE2MTUyOTkyMTQsImV4cCI6MTYxNTczMTIxNCwibmJmIjoxNjE1Mjk5MjE0LCJqdGkiOiI5VjZYNWVaYTUxSGJSS3BZIiwic3ViIjoxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0._05_RcUX-JBu2ZVwniQtHrFBhnTFhyYaltXiHfr2fsA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"FirstName\": \"Yurii\",\n  \"LastName\": \"Osadchyi\",\n  \"Gender\": \"Female\",\n  \"Birthday\": \"1984-08-30\",\n  \"LaunchpadId\": \"5e9e4501f509094ba4566f84\",\n  \"DestinationId\": \"b805aa0a-b14b-41b2-b927-d9a6e1fa22a9\",\n  \"LaunchDate\": \"2022-03-09\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/booking/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"booking",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New booking: same launchpad/destination during same week",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODA4MFwvYXBpXC92MVwvdXNlclwvbG9naW4iLCJpYXQiOjE2MTUyOTkyMTQsImV4cCI6MTYxNTczMTIxNCwibmJmIjoxNjE1Mjk5MjE0LCJqdGkiOiI5VjZYNWVaYTUxSGJSS3BZIiwic3ViIjoxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0._05_RcUX-JBu2ZVwniQtHrFBhnTFhyYaltXiHfr2fsA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"FirstName\": \"Yurii\",\n  \"LastName\": \"Osadchyi\",\n  \"Gender\": \"Female\",\n  \"Birthday\": \"1984-08-30\",\n  \"LaunchpadId\": \"5e9e4501f509094ba4566f84\",\n  \"DestinationId\": \"b805aa0a-b14b-41b2-b927-d9a6e1fa22a9\",\n  \"LaunchDate\": \"2022-03-10\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/booking/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"booking",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New booking: same destination, different launchpad during same week",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODA4MFwvYXBpXC92MVwvdXNlclwvbG9naW4iLCJpYXQiOjE2MTUyOTkyMTQsImV4cCI6MTYxNTczMTIxNCwibmJmIjoxNjE1Mjk5MjE0LCJqdGkiOiI5VjZYNWVaYTUxSGJSS3BZIiwic3ViIjoxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0._05_RcUX-JBu2ZVwniQtHrFBhnTFhyYaltXiHfr2fsA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"FirstName\": \"Yurii\",\n  \"LastName\": \"Osadchyi\",\n  \"Gender\": \"Female\",\n  \"Birthday\": \"1984-08-30\",\n  \"LaunchpadId\": \"5e9e4502f509092b78566f87\",\n  \"DestinationId\": \"b805aa0a-b14b-41b2-b927-d9a6e1fa22a9\",\n  \"LaunchDate\": \"2022-03-10\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/booking/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"booking",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New booking: same destination/launchpad during next week",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODA4MFwvYXBpXC92MVwvdXNlclwvbG9naW4iLCJpYXQiOjE2MTUyOTkyMTQsImV4cCI6MTYxNTczMTIxNCwibmJmIjoxNjE1Mjk5MjE0LCJqdGkiOiI5VjZYNWVaYTUxSGJSS3BZIiwic3ViIjoxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0._05_RcUX-JBu2ZVwniQtHrFBhnTFhyYaltXiHfr2fsA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"FirstName\": \"Yurii\",\n  \"LastName\": \"Osadchyi\",\n  \"Gender\": \"Female\",\n  \"Birthday\": \"1984-08-30\",\n  \"LaunchpadId\": \"5e9e4502f509092b78566f87\",\n  \"DestinationId\": \"b805aa0a-b14b-41b2-b927-d9a6e1fa22a9\",\n  \"LaunchDate\": \"2022-03-17\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/booking/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"booking",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all bookings",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.globals.set(\"BOOKING_ID\", pm.response.json()[0].Id);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODA4MFwvYXBpXC92MVwvdXNlclwvbG9naW4iLCJpYXQiOjE2MTUyOTkyMTQsImV4cCI6MTYxNTczMTIxNCwibmJmIjoxNjE1Mjk5MjE0LCJqdGkiOiI5VjZYNWVaYTUxSGJSS3BZIiwic3ViIjoxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0._05_RcUX-JBu2ZVwniQtHrFBhnTFhyYaltXiHfr2fsA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/booking/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"booking",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete first booking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODA4MFwvYXBpXC92MVwvdXNlclwvbG9naW4iLCJpYXQiOjE2MTUyOTkyMTQsImV4cCI6MTYxNTczMTIxNCwibmJmIjoxNjE1Mjk5MjE0LCJqdGkiOiI5VjZYNWVaYTUxSGJSS3BZIiwic3ViIjoxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0._05_RcUX-JBu2ZVwniQtHrFBhnTFhyYaltXiHfr2fsA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/booking/${{BOOKING_ID}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"booking",
+						"${{BOOKING_ID}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
