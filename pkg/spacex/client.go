@@ -55,7 +55,7 @@ func (c *client) doGet(resource string, result interface{}) error {
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
-			println("error closing response")
+			panic("error closing response")
 		}
 	}(resp.Body)
 

@@ -1,0 +1,1 @@
+DROP INDEX launch_date_idx;

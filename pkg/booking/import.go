@@ -1,14 +1,14 @@
 package booking
 
 import (
-	"database/sql"
+	"time"
 
 	"github.com/yosadchyi/space-booking/pkg/spacex"
 )
 
 type DataImporter interface {
 	ImportLaunchpads() error
-	ImportSpaceXLaunches(db *sql.DB) error
+	ImportUpcomingSpaceXLaunches() error
 }
 
 type dataImporter struct {
@@ -43,6 +43,20 @@ func (d *dataImporter) ImportLaunchpads() error {
 	return nil
 }
 
-func (d *dataImporter) ImportSpaceXLaunches(db *sql.DB) error {
-	panic("implement me")
+func (d *dataImporter) ImportUpcomingSpaceXLaunches() error {
+	launches, err := d.client.GetUpcomingLaunches()
+	if err != nil {
+		return err
+	}
+	for _, launch := range launches {
+		err := d.launchRepo.Add(&Launch{
+			Id:          launch.Id,
+			LaunchpadId: launch.Launchpad,
+			Date:        Date(time.Unix(launch.DateUnix, 0)),
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

@@ -23,4 +23,15 @@ func main() {
 	if err != nil {
 		log.Fatalf("error importing launchpad data: %s", err)
 	}
+
+	log.Println("importing upcoming launches data...")
+	err = importer.ImportUpcomingSpaceXLaunches()
+	if err != nil {
+		log.Fatalf("error importing upcoming launches: %s", err)
+	}
+
+	upcoming, _ := launchRepository.GetAllUpcoming()
+	log.Printf("%v", upcoming)
+
+	log.Println("data import finished successfully")
 }
