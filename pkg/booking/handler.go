@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
+// Handler exposes HTTP endpoints
 type Handler struct {
 	service          *Service
 	launchpadPat     *regexp.Regexp
@@ -17,6 +18,7 @@ type Handler struct {
 	deleteBookingPat *regexp.Regexp
 }
 
+// NewHandler creates new handler ready to handle HTTP requests
 func NewHandler(service *Service) *Handler {
 	return &Handler{
 		service:          service,
@@ -27,6 +29,7 @@ func NewHandler(service *Service) *Handler {
 	}
 }
 
+// ServeHTTP is called on every http request
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:

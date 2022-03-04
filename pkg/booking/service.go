@@ -63,7 +63,7 @@ func (s *Service) GetAllBookings() (AllBookingsResponse, error) {
 
 func (s *Service) DeleteBooking(id string) error {
 	tx, _ := s.db.Begin()
-	err := s.mainRepository.Delete(tx, id)
+	err := s.mainRepository.DeleteTx(tx, id)
 	if err != nil {
 		_ = tx.Rollback()
 		return err
@@ -118,7 +118,7 @@ func (s *Service) AddBooking(request Request) (interface{}, error) {
 	}
 
 	tx, _ := s.db.Begin()
-	launches, err := s.launchRepository.GetFromLaunchpadAtDate(request.LaunchpadId, request.LaunchDate)
+	launches, err := s.launchRepository.GetAllFromLaunchpadAtDate(request.LaunchpadId, request.LaunchDate)
 
 	if err != nil {
 		return nil, err

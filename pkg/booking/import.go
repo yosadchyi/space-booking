@@ -3,9 +3,11 @@ package booking
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/yosadchyi/space-booking/pkg/spacex"
 )
 
+// DataImporter imports the data from external sources
 type DataImporter interface {
 	ImportLaunchpads() error
 	ImportUpcomingSpaceXLaunches() error
@@ -17,6 +19,7 @@ type dataImporter struct {
 	launchRepo    LaunchRepository
 }
 
+// NewDataImporter creates new data importer
 func NewDataImporter(client spacex.Client, launchpadRepo LaunchpadRepository, launchRepo LaunchRepository) DataImporter {
 	return &dataImporter{
 		client:        client,
@@ -25,6 +28,7 @@ func NewDataImporter(client spacex.Client, launchpadRepo LaunchpadRepository, la
 	}
 }
 
+// ImportLaunchpads imports launchpads information, duplicates are updated
 func (d *dataImporter) ImportLaunchpads() error {
 	launchpads, err := d.client.GetAllLaunchpads()
 	if err != nil {
@@ -43,14 +47,19 @@ func (d *dataImporter) ImportLaunchpads() error {
 	return nil
 }
 
+// ImportUpcomingSpaceXLaunches fetches and stores information about upcoming launches, duplicates are ignored
 func (d *dataImporter) ImportUpcomingSpaceXLaunches() error {
 	launches, err := d.client.GetUpcomingLaunches()
 	if err != nil {
 		return err
 	}
 	for _, launch := range launches {
-		err := d.launchRepo.Add(&Launch{
-			Id:          launch.Id,
+		newUUID, err := uuid.NewUUID()
+		if err != nil {
+			return err
+		}
+		err = d.launchRepo.Add(&Launch{
+			Id:          newUUID.String(),
 			LaunchpadId: launch.Launchpad,
 			Date:        Date(time.Unix(launch.DateUnix, 0)),
 		})
