@@ -73,8 +73,7 @@ func (s *Service) DeleteBooking(id string) error {
 		_ = tx.Rollback()
 		return err
 	}
-	_ = tx.Commit()
-	return nil
+	return tx.Commit()
 }
 
 func (s *Service) AddBooking(request Request) (interface{}, error) {
@@ -168,8 +167,10 @@ func (s *Service) AddBooking(request Request) (interface{}, error) {
 		_ = tx.Rollback()
 		return nil, err
 	}
-	_ = tx.Commit()
-
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
 	return &SuccessResponse{Id: booking.Id}, nil
 }
 
