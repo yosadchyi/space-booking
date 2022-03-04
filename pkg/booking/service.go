@@ -94,14 +94,6 @@ func (s *Service) AddBooking(request Request) (interface{}, error) {
 			Message: "launchpad does not exists or is inactive",
 		}, nil
 	}
-	_, err = uuid.Parse(request.DestinationId)
-	if err != nil {
-		// bad uuid
-		return &ErrorResponse{
-			Code:    "DESTINATION_ID_IS_INVALID",
-			Message: "malformed destination id",
-		}, nil
-	}
 	exists, err := s.destinationRepository.Exists(request.DestinationId)
 	if err != nil {
 		return nil, err

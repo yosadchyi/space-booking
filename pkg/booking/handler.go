@@ -82,6 +82,11 @@ func (h *Handler) handlePOST(w http.ResponseWriter, r *http.Request) {
 			badRequest(w)
 			break
 		}
+		_, err = uuid.Parse(request.DestinationId)
+		if err != nil {
+			badRequest(w)
+			break
+		}
 		response, err := h.service.AddBooking(request)
 		if err != nil {
 			internalServerError(w, err)
