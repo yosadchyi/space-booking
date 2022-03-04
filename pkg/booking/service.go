@@ -9,6 +9,7 @@ import (
 	"github.com/yosadchyi/space-booking/pkg/spacex"
 )
 
+// Service is an entity representing business logic
 type Service struct {
 	db                    *sql.DB
 	launchpadRepository   LaunchpadRepository
@@ -18,6 +19,7 @@ type Service struct {
 	mainRepository        MainRepository
 }
 
+// NewService returns new service, creates internal dependencies
 func NewService(db *sql.DB) *Service {
 	spaceXClient := spacex.NewClient()
 	launchpadRepository := NewLaunchpadRepository(db)
@@ -33,6 +35,7 @@ func NewService(db *sql.DB) *Service {
 	}
 }
 
+// Init initializes service
 func (s *Service) Init() {
 	log.Println("importing launchpad data...")
 	err := s.importer.ImportLaunchpads()
@@ -49,18 +52,22 @@ func (s *Service) Init() {
 	log.Println("data import finished successfully")
 }
 
+// GetAllLaunchpads returns all launchpads
 func (s *Service) GetAllLaunchpads() (AllLaunchpadsResponse, error) {
 	return s.launchpadRepository.GetAllActive()
 }
 
+// GetAllDestinations returns all destinations
 func (s *Service) GetAllDestinations() (AllDestinationsResponse, error) {
 	return s.destinationRepository.GetAll()
 }
 
+// GetAllBookings returns all bookings
 func (s *Service) GetAllBookings() (AllBookingsResponse, error) {
 	return s.mainRepository.GetAll()
 }
 
+// DeleteBooking deletes booking and related launch
 func (s *Service) DeleteBooking(id string) error {
 	tx, _ := s.db.Begin()
 	err := s.mainRepository.DeleteTx(tx, id)
@@ -76,6 +83,7 @@ func (s *Service) DeleteBooking(id string) error {
 	return tx.Commit()
 }
 
+// AddBooking adds booking
 func (s *Service) AddBooking(request Request) (interface{}, error) {
 	if time.Time(request.LaunchDate).Before(time.Now()) {
 		return &ErrorResponse{
@@ -174,6 +182,7 @@ func (s *Service) AddBooking(request Request) (interface{}, error) {
 	return &SuccessResponse{Id: booking.Id}, nil
 }
 
+// PingDb pings db, to determine if db is available and schema created
 func (s *Service) PingDb() error {
 	_, err := s.db.Exec("SELECT * FROM launchpad")
 	return err
